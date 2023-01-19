@@ -18,7 +18,7 @@ process.stdin.setRawMode(true);
 (async () => {
     for (;;) {
         const input = await prompt.get("jsh");
-        interpreter(input.jshell);
+        interpreter(input.jsh);
     }
 })();
 
