@@ -1,6 +1,8 @@
+![jsh](https://user-images.githubusercontent.com/99618877/213927588-78d08b31-ee3f-490e-a1a5-6ed8a881f121.png)
+
 # JSH
 
-A really simple JavaScrippt shell run locally with Node.js.
+A really simple JavaScript shell run locally with Node.js.
 
 ## Commands
 
@@ -13,4 +15,4 @@ A really simple JavaScrippt shell run locally with Node.js.
 ## Keyboard shortcuts
 
 * `Ctrl+P` - close jsh
-* `Up` and `Down` : navigate in the jsh commands history
+* `Up` and `Down` - navigate in the jsh commands history
