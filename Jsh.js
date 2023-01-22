@@ -26,23 +26,28 @@ process.stdin.setRawMode(true);
 function interpreter(input) {
     const parsedInput = input.split(" ");
     switch (parsedInput[0]) {
-        case "run":  run(parsedInput, ""); break;
-        case "lp":   lp(parsedInput);      break;
-        case "bing": bing(parsedInput);    break;
-        case "keep": keep(parsedInput);    break;
-        default:                           break;
+        case "run":  run(parsedInput); 	break;
+        case "lp":   lp(parsedInput);   break;
+        case "bing": bing(parsedInput); break;
+        case "keep": keep(parsedInput); break;
+        default:                        break;
     }
 }
 
 // Exécution d'un programme de chemin donné
-function run(parsedInput, suffix) {
-    if (parsedInput.length == 2) {
+function run(parsedInput) {
+    if (parsedInput.length == 2 || parsedInput.length == 3) {
         if (parsedInput[1].charAt(0) == "/") {
-            exec(parsedInput[1] + suffix);
-        } else {
+			if (parsedInput[3] == "!") {
+				suffix = " &"
+			} else {
+				suffix = ""
+			}
+			exec(parsedInput[1] + suffix);
+		} else {
             console.log("Le chemin doit commencer par \"/\"");
         }
-    } else if (parsedInput.length < 2) {
+	} else if (parsedInput.length < 2) {
         console.log("Veuillez indiquer le chemin vers l'exécutable.");
     } else {
         console.log("Trop d'arguments donnés.");
