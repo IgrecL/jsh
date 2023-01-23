@@ -2,14 +2,13 @@ const { exit } = require("process");
 const prompt = require("prompt"); prompt.start();
 const exec = require("child_process").exec;
 const readline = require('readline');
+const fs = require('fs');
 
 // Gestion des entrées clavier
 readline.emitKeypressEvents(process.stdin);
 process.stdin.on('keypress', (ch, key) => {
     if (key.ctrl && key.name == "p") { // On sort si l'utilisateur fait CTRL+P
-        exit()
-    } else if (key.name == "up") { // Navigation parmis les commandes précédentes
-        
+        exit();
     }
 });
 process.stdin.setRawMode(true);
@@ -32,18 +31,25 @@ function interpreter(input) {
         case "keep": keep(parsedInput); break;
         default:                        break;
     }
+	fs.appendFile('.jshistory', input+ "\n", err => {
+	    if (err) {
+			console.error(err);
+	  	}	
+	});
 }
 
 // Exécution d'un programme de chemin donné
 function run(parsedInput) {
     if (parsedInput.length == 2 || parsedInput.length == 3) {
         if (parsedInput[1].charAt(0) == "/") {
-			if (parsedInput[3] == "!") {
+			if (parsedInput[2] == "!") {
+				prefix = "nohup "
 				suffix = " &"
 			} else {
+				prefix = ""
 				suffix = ""
 			}
-			exec(parsedInput[1] + suffix);
+			exec(prefix + parsedInput[1] + suffix);
 		} else {
             console.log("Le chemin doit commencer par \"/\"");
         }
@@ -58,7 +64,7 @@ function run(parsedInput) {
 function lp(parsedInput) {
     if (parsedInput.length == 1) {
         exec("ps -A",
-        function (stdout) {
+        function (error, stdout, stderr) {
             console.log("\nListe des processus : \n\n" + stdout);
         });
     } else {
