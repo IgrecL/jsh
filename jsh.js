@@ -3,12 +3,13 @@ const prompt = require("prompt"); prompt.start();
 const exec = require("child_process").exec;
 const readline = require('readline');
 const fs = require('fs');
+const { execSync } = require("child_process");
 
 // Gestion des entrées clavier
 readline.emitKeypressEvents(process.stdin);
 process.stdin.on('keypress', (ch, key) => {
     if (key.ctrl && key.name == "p") { // On sort si l'utilisateur fait CTRL+P
-        exit();
+        exit(1);
     }
 });
 process.stdin.setRawMode(true);
@@ -25,6 +26,7 @@ process.stdin.setRawMode(true);
 function interpreter(input) {
     const parsedInput = input.split(" ");
     switch (parsedInput[0]) {
+		case "help": help(); 			break;
         case "run":  run(parsedInput); 	break;
         case "lp":   lp(parsedInput);   break;
         case "bing": bing(parsedInput); break;
@@ -38,20 +40,22 @@ function interpreter(input) {
 	});
 }
 
+// Affiche la liste des commandes disponibles
+function help() {
+	console.log("\n   - help : display the list of available commands\n   - run <path> [!] : run a process with its absolute or relative path (you can add the postfixe \"!\" to detach the process)\n   - lp : list running processes by decreasing pid\n   - bing [-k|-p|-c] <pid> : kill, pause or resume a running process\n   - keep <pid> : keep a process alive even after closing jsh\n");
+}
+
 // Exécution d'un programme de chemin donné
 function run(parsedInput) {
     if (parsedInput.length == 2 || parsedInput.length == 3) {
-        if (parsedInput[1].charAt(0) == "/") {
+        if (parsedInput[1].charAt(0) == "/" || parsedInput[1].charAt(0) == ".") {
 			if (parsedInput[2] == "!") {
-				prefix = "nohup "
-				suffix = " &"
+				exec("nohup " + parsedInput[1])
 			} else {
-				prefix = ""
-				suffix = ""
+				execSync(parsedInput[1]);
 			}
-			exec(prefix + parsedInput[1] + suffix);
 		} else {
-            console.log("Le chemin doit commencer par \"/\"");
+            console.log("Le chemin doit commencer par \"/\" ou \"./\"");
         }
 	} else if (parsedInput.length < 2) {
         console.log("Veuillez indiquer le chemin vers l'exécutable.");
@@ -95,5 +99,11 @@ function bing(parsedInput) {
 }
 
 function keep(parsedInput) {
-    
+	if (parsedInput.length < 3) {
+		pid = parsedInput[1];
+		exec("kill -SIGSTOP" + pid);
+		exec("kill -SIGCONT" + pid);
+	} else {
+        console.log("Trop d'arguments. Entrez juste \"keep <pid>\".")
+	}
 }
