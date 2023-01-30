@@ -42,21 +42,17 @@ function interpreter(input) {
 
 // Display the list of available commands
 function help() {
-	console.log("\n   - help : display the list of available commands\n   - run <path> [!] : run a process with its absolute or relative path (you can add the postfixe \"!\" to detach the process)\n   - lp : list running processes by decreasing pid\n   - bing [-k|-p|-c] <pid> : kill, pause or resume a running process\n   - keep <pid> : keep a process alive even after closing jsh\n");
+	console.log("\n   - help : display the list of available commands\n   - run <path> [!] : run a process with its absolute or relative path or with its name (you can add the postfixe \"!\" to detach the process)\n   - lp : list running processes by decreasing pid\n   - bing [-k|-p|-c] <pid> : kill, pause or resume a running process\n   - keep <pid> : keep a process alive even after closing jsh\n");
 }
 
 // Run a process with its absolute or relative path
 function run(parsedInput) {
     if (parsedInput.length == 2 || parsedInput.length == 3) {
-        if (parsedInput[1].charAt(0) == "/" || parsedInput[1].charAt(0) == ".") {
-			if (parsedInput[2] == "!") {
-				exec("nohup " + parsedInput[1])
-			} else {
-				execSync(parsedInput[1]);
-			}
+		if (parsedInput[2] == "!") {
+			exec("nohup " + parsedInput[1])
 		} else {
-            console.log("The path has to start with \"/\" or \"./\".");
-        }
+			execSync(parsedInput[1]);
+		}
 	} else if (parsedInput.length < 2) {
         console.log("Please enter the path.");
     } else {
