@@ -49,9 +49,20 @@ function help() {
 function run(parsedInput) {
     if (parsedInput.length == 2 || parsedInput.length == 3) {
 		if (parsedInput[2] == "!") {
-			exec("nohup " + parsedInput[1])
+			exec("nohup " + parsedInput[1], function (error, stdout, stderr) {
+				console.log(stdout);
+				if (error !== null) {
+					console.log('exec error: ' + error);
+				}
+			})
 		} else {
-			execSync(parsedInput[1]);
+			exec(parsedInput[1], function (error, stdout, stderr) {
+				console.log(stdout);
+				if (error !== null) {
+					console.log('exec error: ' + error);
+				}
+			}
+			);
 		}
 	} else if (parsedInput.length < 2) {
         console.log("Please enter the path.");
