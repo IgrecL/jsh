@@ -1,6 +1,7 @@
 const { exit } = require("process");
 const prompt = require("prompt"); prompt.start();
 const exec = require("child_process").exec;
+const spawn = require("child_process").spawn;
 const readline = require('readline');
 const fs = require('fs');
 const { execSync } = require("child_process");
@@ -47,27 +48,27 @@ function help() {
 
 // Run a process with its absolute or relative path
 function run(parsedInput) {
-    if (parsedInput.length == 2 || parsedInput.length == 3) {
-		if (parsedInput[2] == "!") {
-			exec("nohup " + parsedInput[1], function (error, stdout, stderr) {
-				console.log(stdout);
-				if (error !== null) {
-					console.log('exec error: ' + error);
-				}
-			})
+    if (parsedInput.length >= 2) {
+		command = parsedInput[1];
+		arguments = parsedInput.slice(2);
+		if (arguments[arguments.length-1] != "!") {
+			const child = spawn(command, arguments);
+			child.stdout.on("data", data => {
+				data = data.slice(0,-1);
+				console.log(`${data}`);
+			});
+			child.stderr.on("data", data => {
+				data = data.slice(0,-1);
+				console.error(`${data}`);
+			});
 		} else {
-			exec(parsedInput[1], function (error, stdout, stderr) {
-				console.log(stdout);
-				if (error !== null) {
-					console.log('exec error: ' + error);
-				}
-			}
-			);
+			arguments = arguments.slice(0, -1);
+			const child = spawn(command, arguments, {
+				stdio: ["ignore", "ignore", "ignore"]
+			});
 		}
-	} else if (parsedInput.length < 2) {
-        console.log("Please enter the path.");
-    } else {
-        console.log("Too many arguments.");
+	} else {
+        console.log("Please enter the path or program name");
     }
 }
 
